@@ -14,6 +14,17 @@ Rectangle {
     anchors.fill: parent
     color: Designs.backgroundColor
 
+    // Expose the objects
+    property alias sendButton: sendButton
+    property alias textInput: textInput
+    property alias listModel: listModel
+
+    // Defined signals for parent
+    signal sendButtonClicked
+    signal listViewItemClicked(string name)
+    signal settingsButtonClicked
+    signal connectionButtonClicked
+
     ListView {
         id: listView
         x: 8
