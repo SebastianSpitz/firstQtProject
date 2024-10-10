@@ -8,12 +8,12 @@ qt6_add_qml_module(content
     RESOURCE_PREFIX "/qt/qml"
     QML_FILES
         App.qml
-        Screen01.ui.qml
+        Main.ui.qml
         Designs.qml
     RESOURCES
         fonts/fonts.txt
         RESOURCES
-        QML_FILES Screen02.ui.qml
-        QML_FILES Screen03.ui.qml
+        QML_FILES Settings.ui.qml
+        QML_FILES Bluetooth.ui.qml
 )
 

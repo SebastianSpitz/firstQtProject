@@ -11,17 +11,17 @@ Window {
     visible: true
     title: "ClientGui"
 
-    Screen01 {
+    Main {
         id: mainScreen
         visible: true
     }
 
-    Screen02 {
+    Settings {
         id: settingsScreen
         visible: false
     }
 
-    Screen03 {
+    Bluetooth {
         id: bluetoothScreen
         visible: false
     }

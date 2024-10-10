@@ -69,7 +69,7 @@ Rectangle {
         Rectangle {
             id: rectangle2
             color: "#00ffffff"
-            border.color: Designs.borderColor
+            border.color: "#ffffff"
             border.width: 1
             anchors.fill: parent
         }
@@ -93,7 +93,7 @@ Rectangle {
         Rectangle {
             id: rectangle1
             color: "#00ffffff"
-            border.color: Designs.borderColor
+            border.color: "#ffffff"
             border.width: 1
             anchors.fill: parent
         }
