@@ -15,6 +15,8 @@ add_library(ClientCore STATIC
   clientcore.cpp
   clientcore.h
   bleclient.h bleclient.cpp
+  eventbus.h eventbus.cpp
+  logger.h logger.cpp
 )
 
 # Specify include directories for the library

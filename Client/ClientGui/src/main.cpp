@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
 
     engine.load(url);
 
-    ClientGui clientGui(qmlInterface, qmlInterface);
+    ClientGui clientGui(qmlInterface);
+    qmlInterface->setEventBus(clientGui.getEventBus());
 
     if (engine.rootObjects().isEmpty()) {
         return -1;

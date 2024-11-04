@@ -23,6 +23,7 @@ qt_add_executable(ClientGuiApp src/main.cpp
     qmlinterface.h qmlinterface.cpp
     clientgui.h clientgui.cpp
     resources.qrc
+
 )
 
 qt_add_qml_module(QmlInterface

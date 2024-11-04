@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <QQmlEngine>
 
+#include "eventbus.h"
+
 class QmlInterface : public QObject
 {
     Q_OBJECT
@@ -13,6 +15,8 @@ class QmlInterface : public QObject
 
 public:
     static QmlInterface *getInstance();
+
+    void setEventBus(EventBus*);
 
     Q_INVOKABLE void buttonPressed(QString textInputString);
     Q_INVOKABLE void listViewItemClicked(QString itemString);

@@ -12,15 +12,14 @@
 #include <QVariant>
 #include <QPermission>
 
+#include "eventbus.h"
+
 class BLEClient : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit BLEClient(QObject *parent = nullptr);
-    void searchServer();
-    void connectToServer(QString serverName);
-    void sendData(QVariant &value);
+    explicit BLEClient(QObject *parent = nullptr, EventBus* = nullptr);
 
 private:
     // Agent connections

@@ -5,6 +5,9 @@
 #include <QDebug>
 
 #include "bleclient.h"
+#include "eventbus.h"
+#include "logger.h"
+#include "bleclient.h"
 
 class ClientCore : public QObject
 {
@@ -13,25 +16,13 @@ class ClientCore : public QObject
 public:
     ClientCore(QObject *parent = nullptr);
 
-    void connectToServer(QString serverName);
-    void searchServer();
-    void sendData(QVariant data);
+    EventBus *getEventBus();
 
 private:
+    EventBus *eventBus;
+    Logger *logger;
     BLEClient *bleClient;
 
-    void bleDataReceived(QVariant data);
-    void bleServerFound(QString serverName);
-    void bleConnected(QString serverName);
-    void bleDisconnected(QString serverName);
-    void bleError(QString errorString);
-
-signals:
-    void sigServerFound(QString serverName);
-    void sigConnected(QString serverName);
-    void sigDisconnected(QString serverName);
-    void sigDataReceived(QVariant data);
-    void sigErrorOccurred(QString errorString);
 };
 
 #endif // CLIENTCORE_H
