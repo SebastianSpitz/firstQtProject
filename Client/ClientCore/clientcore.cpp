@@ -5,7 +5,7 @@ ClientCore::ClientCore(QObject *parent)
 {
     eventBus = new EventBus();
     logger = Logger::getInstance();
-    bleClient = new BLEClient(this, eventBus);
+    bleClient = new BleClient(this, eventBus);
 }
 
 EventBus *ClientCore::getEventBus()

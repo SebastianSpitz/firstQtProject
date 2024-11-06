@@ -21,7 +21,7 @@ public:
 private:
     EventBus *eventBus;
     Logger *logger;
-    BLEClient *bleClient;
+    BleClient *bleClient;
 
 };
 

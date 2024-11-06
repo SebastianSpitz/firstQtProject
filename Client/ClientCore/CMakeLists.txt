@@ -17,6 +17,7 @@ add_library(ClientCore STATIC
   bleclient.h bleclient.cpp
   eventbus.h eventbus.cpp
   logger.h logger.cpp
+  bluetoothutils.h bluetoothutils.cpp
 )
 
 # Specify include directories for the library

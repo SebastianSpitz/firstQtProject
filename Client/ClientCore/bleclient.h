@@ -2,60 +2,62 @@
 #define BLECLIENT_H
 
 #include <QObject>
-#include <QBluetoothLocalDevice>
-#include <QCoreApplication>
+#include <QBluetoothDeviceDiscoveryAgent>
 #include <QLowEnergyController>
 #include <QLowEnergyService>
-#include <QLowEnergyCharacteristic>
-#include <QBluetoothDeviceDiscoveryAgent>
-#include <QLowEnergyDescriptor>
-#include <QVariant>
-#include <QPermission>
+#include <QBluetoothDeviceInfo>
+#include <QBluetoothUuid>
+#include <QList>
+#include <QTimer>
 
 #include "eventbus.h"
+#include "logger.h"
+#include "bluetoothutils.h"
 
-class BLEClient : public QObject
+class BleClient : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit BLEClient(QObject *parent = nullptr, EventBus* = nullptr);
+    explicit BleClient(QObject *parent = nullptr, EventBus *eventBus = nullptr);
+    ~BleClient();
 
 private:
-    // Agent connections
-    void agentDeviceDiscovered(const QBluetoothDeviceInfo &info);
-    void agentError(QBluetoothDeviceDiscoveryAgent::Error error);
-    void agentFinished();
-    void agentCanceled();
 
-    // Controller connections
-    void controllerDiscovered(const QBluetoothUuid &newService);
-    void controllerFinished();
-    void controllerError(QLowEnergyController::Error newError);
+    // Sets the target device name to search for
+    void setTargetDeviceName(const QString &name);
+
+    // Starts scanning for BLE devices
+    void startDeviceDiscovery();
+
+    // Sends data to the BLE server
+    void sendData(const QByteArray &data);
+
+    // Disconnects from the current BLE device
+    void disconnectFromDevice();
+
+    void deviceDiscoveryDeviceDiscovered(const QBluetoothDeviceInfo &deviceInfo);
+    void deviceDiscoveryFinished();
+    void deviceDiscoveryError();
     void controllerConnected();
     void controllerDisconnected();
+    void controllerErrorOccurred(QLowEnergyController::Error error);
+    void serviceDiscoveredHandler(const QBluetoothUuid &serviceUuid);
+    void serviceScanDone();
+    void serviceStateChanged(QLowEnergyService::ServiceState s);
+    void characteristicChanged(const QLowEnergyCharacteristic &c, const QByteArray &value);
+    void descriptorWritten(const QLowEnergyDescriptor &d, const QByteArray &value);
 
-    // Service connections
-    void serviceStateChanged(QLowEnergyService::ServiceState newState);
-    void serviceCharChanged(const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue);
-    void serviceDescWritten(const QLowEnergyDescriptor &descriptor, const QByteArray &newValue);
-
-    QString serverName;
-    QBluetoothLocalDevice localDevice;
-    QBluetoothDeviceDiscoveryAgent *agent;
-    QLowEnergyController *controller;
-    QLowEnergyService *service;
-    QLowEnergyCharacteristic characteristic;
-
-    QBluetoothUuid serviceUuid = QBluetoothUuid(QStringLiteral("12345678-1234-5678-1234-56789abcdef0"));
-    QBluetoothUuid characteristicUuid = QBluetoothUuid(QStringLiteral("abcdef01-1234-5678-1234-56789abcdef0"));
-
-signals:
-    void sigServerFound(QString server);
-    void sigDataReceived(QVariant &value);
-    void sigConnected(QString serverName);
-    void sigDisconnected(QString serverName);
-    void sigErrorOccurred(QString errorString);
+    QVariantMap statusRequest();
+    EventBus *eventBus;
+    Logger *logger;
+    QString m_targetDeviceName;
+    QBluetoothDeviceDiscoveryAgent *m_deviceDiscoveryAgent;
+    QLowEnergyController *m_control;
+    QLowEnergyService *m_service;
+    QLowEnergyCharacteristic m_writeCharacteristic;
+    QLowEnergyCharacteristic m_readCharacteristic;
+    QLowEnergyDescriptor m_notificationDesc;
 };
 
 #endif // BLECLIENT_H

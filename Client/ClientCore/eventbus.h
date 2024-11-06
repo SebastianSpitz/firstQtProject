@@ -13,8 +13,13 @@ signals:
     // BLEClient
     void bleClientConnected(QVariantMap);
     void bleClientDisconnected(QVariantMap);
-    void bleDataReceived(QVariantMap);
-    bool bleSendData(QVariantMap);
+    void bleClientError(QVariantMap);
+    void bleClientDeviceFound(QVariantMap);
+    void bleClientDiscoveryFinished(QVariantMap);
+    void bleClientDataReceived(QVariantMap);
+    bool bleClientSendData(QVariantMap);
+    bool bleClientSearchServer(QVariantMap);
+    bool bleClientDisconnect();
 
     // QML main
     void mainListViewItemClicked(QVariantMap);
@@ -25,7 +30,7 @@ signals:
     void blListViewItemClicked(QVariantMap);
     void blSearchButtonClicked();
 
-    //
+    // QML settings
     QVariantMap statusRequest();
 };
 
