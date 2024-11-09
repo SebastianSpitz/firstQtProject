@@ -5,9 +5,19 @@
 #include <QString>
 #include <QStringList>
 #include <QBluetoothDeviceInfo>
+#include <QVariantList>
+#include <QMultiHash>
+#include <QList>
+#include <QByteArray>
+#include <QBluetoothAddress>
+#include <QBluetoothUuid>
 
 class BluetoothUtils {
 public:
+
+    // Convert QBluetoothDeviceInfo into a QVariantMap object
+    static QVariantMap deviceInfoToVariantMap(const QBluetoothDeviceInfo &deviceInfo);
+
     // CoreConfiguration
     static QString coreConfigurationToString(QBluetoothDeviceInfo::CoreConfigurations configs);
 
@@ -17,35 +27,8 @@ public:
     // MajorDeviceClass
     static QString majorDeviceClassToString(QBluetoothDeviceInfo::MajorDeviceClass majorClass);
 
-    // MinorAudioVideoClass
-    static QString minorAudioVideoClassToString(QBluetoothDeviceInfo::MinorAudioVideoClass minorClass);
-
-    // MinorComputerClass
-    static QString minorComputerClassToString(QBluetoothDeviceInfo::MinorComputerClass minorClass);
-
-    // MinorHealthClass
-    static QString minorHealthClassToString(QBluetoothDeviceInfo::MinorHealthClass minorClass);
-
-    // MinorImagingClass
-    static QString minorImagingClassToString(QBluetoothDeviceInfo::MinorImagingClass minorClass);
-
-    // MinorMiscellaneousClass
-    static QString minorMiscellaneousClassToString(QBluetoothDeviceInfo::MinorMiscellaneousClass minorClass);
-
-    // MinorNetworkClass
-    static QString minorNetworkClassToString(QBluetoothDeviceInfo::MinorNetworkClass minorClass);
-
-    // MinorPeripheralClass
-    static QString minorPeripheralClassToString(QBluetoothDeviceInfo::MinorPeripheralClass minorClass);
-
-    // MinorPhoneClass
-    static QString minorPhoneClassToString(QBluetoothDeviceInfo::MinorPhoneClass minorClass);
-
-    // MinorToyClass
-    static QString minorToyClassToString(QBluetoothDeviceInfo::MinorToyClass minorClass);
-
-    // MinorWearableClass
-    static QString minorWearableClassToString(QBluetoothDeviceInfo::MinorWearableClass minorClass);
+    // MinorDeviceClass
+    static QString minorDeviceClassToString(QBluetoothDeviceInfo::MajorDeviceClass majorClass, quint8 minorClass);
 
     // ServiceClass
     static QString serviceClassToString(QBluetoothDeviceInfo::ServiceClasses services);

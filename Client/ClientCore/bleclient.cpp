@@ -52,10 +52,7 @@ void BleClient::deviceDiscoveryDeviceDiscovered(const QBluetoothDeviceInfo &devi
             // Found the target device
 
             QVariantMap map;
-            map["deviceName"]               = deviceInfo.name();
-            map["deviceAddress"]            = deviceInfo.address().toString();
-            map["deviceUUID"]               = deviceInfo.deviceUuid();
-            map["deviceCoreConfiguration"]  = BluetoothUtils::coreConfigurationToString(deviceInfo.coreConfigurations());
+            BluetoothUtils::deviceInfoToVariantMap(deviceInfo);
 
             emit eventBus->bleClientDeviceFound(map);
             logger->logInfo("Device found: " + deviceInfo.name());

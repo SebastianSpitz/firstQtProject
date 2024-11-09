@@ -1,6 +1,91 @@
 // BluetoothUtils.cpp
 #include "bluetoothutils.h"
 
+// Convert QBluetoothDeviceInfo into QVariantMap object
+QVariantMap BluetoothUtils::deviceInfoToVariantMap(const QBluetoothDeviceInfo &deviceInfo)
+{
+    QVariantMap map;
+
+    // address()
+    map["address"] = deviceInfo.address().toString();
+
+    // coreConfigurations()
+    map["coreConfigurations"] = coreConfigurationToString(deviceInfo.coreConfigurations());
+
+    // deviceUuid()
+    map["deviceUuid"] = deviceInfo.deviceUuid().toString();
+
+    // isCached()
+    map["isCached"] = deviceInfo.isCached();
+
+    // isValid()
+    map["isValid"] = deviceInfo.isValid();
+
+    // majorDeviceClass()
+    map["majorDeviceClass"] = majorDeviceClassToString(deviceInfo.majorDeviceClass());
+
+    // minorDeviceClass()
+    map["minorDeviceClass"] = minorDeviceClassToString(deviceInfo.majorDeviceClass(), deviceInfo.minorDeviceClass());
+
+    // manufacturerData()
+    QMultiHash<quint16, QByteArray> manufacturerData = deviceInfo.manufacturerData();
+    QVariantList manufacturerDataList;
+    for (auto it = manufacturerData.constBegin(); it != manufacturerData.constEnd(); ++it) {
+        QVariantMap dataEntry;
+        dataEntry["manufacturerId"] = static_cast<int>(it.key());
+        dataEntry["data"] = QString::fromLatin1(it.value().toHex());
+        manufacturerDataList.append(dataEntry);
+    }
+    map["manufacturerData"] = manufacturerDataList;
+
+    // manufacturerIds()
+    QList<quint16> manufacturerIds = deviceInfo.manufacturerIds();
+    QVariantList manufacturerIdsList;
+    for (quint16 id : manufacturerIds) {
+        manufacturerIdsList.append(static_cast<int>(id));
+    }
+    map["manufacturerIds"] = manufacturerIdsList;
+
+    // name()
+    map["name"] = deviceInfo.name();
+
+    // rssi()
+    map["rssi"] = deviceInfo.rssi();
+
+    // serviceClasses()
+    map["serviceClasses"] = serviceClassToString(deviceInfo.serviceClasses());
+
+    // serviceData()
+    QMultiHash<QBluetoothUuid, QByteArray> serviceData = deviceInfo.serviceData();
+    QVariantList serviceDataList;
+    for (auto it = serviceData.constBegin(); it != serviceData.constEnd(); ++it) {
+        QVariantMap dataEntry;
+        dataEntry["serviceUuid"] = it.key().toString();
+        dataEntry["data"] = QString::fromLatin1(it.value().toHex());
+        serviceDataList.append(dataEntry);
+    }
+    map["serviceData"] = serviceDataList;
+
+    // serviceIds()
+    QList<QBluetoothUuid> serviceIds = deviceInfo.serviceIds();
+    QVariantList serviceIdsList;
+    for (const QBluetoothUuid &uuid : serviceIds) {
+        serviceIdsList.append(uuid.toString());
+    }
+    map["serviceIds"] = serviceIdsList;
+
+    // serviceUuids()
+    QList<QBluetoothUuid> serviceUuids = deviceInfo.serviceUuids();
+    QVariantList serviceUuidsList;
+    for (const QBluetoothUuid &uuid : serviceUuids) {
+        serviceUuidsList.append(uuid.toString());
+    }
+    map["serviceUuids"] = serviceUuidsList;
+
+    return map;
+}
+
+
 // CoreConfiguration
 QString BluetoothUtils::coreConfigurationToString(QBluetoothDeviceInfo::CoreConfigurations configs) {
     QStringList configList;
@@ -39,257 +124,29 @@ QString BluetoothUtils::fieldToString(QBluetoothDeviceInfo::Fields fields) {
 QString BluetoothUtils::majorDeviceClassToString(QBluetoothDeviceInfo::MajorDeviceClass majorClass) {
     switch (majorClass) {
     case QBluetoothDeviceInfo::MiscellaneousDevice:
-        return "MiscellaneousDevice";
+        return "Miscellaneous Device";
     case QBluetoothDeviceInfo::ComputerDevice:
-        return "ComputerDevice";
+        return "Computer Device";
     case QBluetoothDeviceInfo::PhoneDevice:
-        return "PhoneDevice";
+        return "Phone Device";
     case QBluetoothDeviceInfo::NetworkDevice:
-        return "NetworkDevice";
+        return "Network Device";
     case QBluetoothDeviceInfo::AudioVideoDevice:
-        return "AudioVideoDevice";
+        return "AudioVideo Device";
     case QBluetoothDeviceInfo::PeripheralDevice:
-        return "PeripheralDevice";
+        return "Peripheral Device";
     case QBluetoothDeviceInfo::ImagingDevice:
-        return "ImagingDevice";
+        return "Imaging Device";
     case QBluetoothDeviceInfo::WearableDevice:
-        return "WearableDevice";
+        return "Wearable Device";
     case QBluetoothDeviceInfo::ToyDevice:
-        return "ToyDevice";
+        return "Toy Device";
     case QBluetoothDeviceInfo::HealthDevice:
-        return "HealthDevice";
+        return "Health Device";
     case QBluetoothDeviceInfo::UncategorizedDevice:
-        return "UncategorizedDevice";
+        return "Uncategorized Device";
     default:
-        return "UnknownMajorDeviceClass";
-    }
-}
-
-// MinorAudioVideoClass
-QString BluetoothUtils::minorAudioVideoClassToString(QBluetoothDeviceInfo::MinorAudioVideoClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedAudioVideoDevice:
-        return "UncategorizedAudioVideoDevice";
-    case QBluetoothDeviceInfo::WearableHeadsetDevice:
-        return "WearableHeadsetDevice";
-    case QBluetoothDeviceInfo::HandsFreeDevice:
-        return "HandsFreeDevice";
-    case QBluetoothDeviceInfo::Microphone:
-        return "Microphone";
-    case QBluetoothDeviceInfo::Loudspeaker:
-        return "Loudspeaker";
-    case QBluetoothDeviceInfo::Headphones:
-        return "Headphones";
-    case QBluetoothDeviceInfo::PortableAudioDevice:
-        return "PortableAudioDevice";
-    case QBluetoothDeviceInfo::CarAudio:
-        return "CarAudio";
-    case QBluetoothDeviceInfo::SetTopBox:
-        return "SetTopBox";
-    case QBluetoothDeviceInfo::HiFiAudioDevice:
-        return "HiFiAudioDevice";
-    case QBluetoothDeviceInfo::Vcr:
-        return "Vcr";
-    case QBluetoothDeviceInfo::VideoCamera:
-        return "VideoCamera";
-    case QBluetoothDeviceInfo::Camcorder:
-        return "Camcorder";
-    case QBluetoothDeviceInfo::VideoMonitor:
-        return "VideoMonitor";
-    case QBluetoothDeviceInfo::VideoDisplayAndLoudspeaker:
-        return "VideoDisplayAndLoudspeaker";
-    case QBluetoothDeviceInfo::VideoConferencing:
-        return "VideoConferencing";
-    case QBluetoothDeviceInfo::GamingDevice:
-        return "GamingDevice";
-    default:
-        return "UnknownMinorAudioVideoClass";
-    }
-}
-
-// MinorComputerClass
-QString BluetoothUtils::minorComputerClassToString(QBluetoothDeviceInfo::MinorComputerClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedComputer:
-        return "UncategorizedComputer";
-    case QBluetoothDeviceInfo::DesktopComputer:
-        return "DesktopComputer";
-    case QBluetoothDeviceInfo::ServerComputer:
-        return "ServerComputer";
-    case QBluetoothDeviceInfo::LaptopComputer:
-        return "LaptopComputer";
-    case QBluetoothDeviceInfo::HandheldClamShellComputer:
-        return "HandheldClamShellComputer";
-    case QBluetoothDeviceInfo::HandheldComputer:
-        return "HandheldComputer";
-    case QBluetoothDeviceInfo::WearableComputer:
-        return "WearableComputer";
-    default:
-        return "UnknownMinorComputerClass";
-    }
-}
-
-// MinorHealthClass
-QString BluetoothUtils::minorHealthClassToString(QBluetoothDeviceInfo::MinorHealthClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedHealthDevice:
-        return "UncategorizedHealthDevice";
-    case QBluetoothDeviceInfo::HealthBloodPressureMonitor:
-        return "HealthBloodPressureMonitor";
-    case QBluetoothDeviceInfo::HealthThermometer:
-        return "HealthThermometer";
-    case QBluetoothDeviceInfo::HealthWeightScale:
-        return "HealthWeightScale";
-    case QBluetoothDeviceInfo::HealthGlucoseMeter:
-        return "HealthGlucoseMeter";
-    case QBluetoothDeviceInfo::HealthPulseOximeter:
-        return "HealthPulseOximeter";
-    case QBluetoothDeviceInfo::HealthDataDisplay:
-        return "HealthDataDisplay";
-    case QBluetoothDeviceInfo::HealthStepCounter:
-        return "HealthStepCounter";
-    default:
-        return "UnknownMinorHealthClass";
-    }
-}
-
-// MinorImagingClass
-QString BluetoothUtils::minorImagingClassToString(QBluetoothDeviceInfo::MinorImagingClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedImagingDevice:
-        return "UncategorizedImagingDevice";
-    case QBluetoothDeviceInfo::ImageDisplay:
-        return "ImageDisplay";
-    case QBluetoothDeviceInfo::ImageCamera:
-        return "ImageCamera";
-    case QBluetoothDeviceInfo::ImageScanner:
-        return "ImageScanner";
-    case QBluetoothDeviceInfo::ImagePrinter:
-        return "ImagePrinter";
-    default:
-        return "UnknownMinorImagingClass";
-    }
-}
-
-// MinorMiscellaneousClass
-QString BluetoothUtils::minorMiscellaneousClassToString(QBluetoothDeviceInfo::MinorMiscellaneousClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedMiscellaneous:
-        return "UncategorizedMiscellaneous";
-    default:
-        return "UnknownMinorMiscellaneousClass";
-    }
-}
-
-// MinorNetworkClass
-QString BluetoothUtils::minorNetworkClassToString(QBluetoothDeviceInfo::MinorNetworkClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::NetworkFullService:
-        return "NetworkFullService";
-    case QBluetoothDeviceInfo::NetworkLoadFactorOne:
-        return "NetworkLoadFactorOne";
-    case QBluetoothDeviceInfo::NetworkLoadFactorTwo:
-        return "NetworkLoadFactorTwo";
-    case QBluetoothDeviceInfo::NetworkLoadFactorThree:
-        return "NetworkLoadFactorThree";
-    case QBluetoothDeviceInfo::NetworkLoadFactorFour:
-        return "NetworkLoadFactorFour";
-    case QBluetoothDeviceInfo::NetworkLoadFactorFive:
-        return "NetworkLoadFactorFive";
-    case QBluetoothDeviceInfo::NetworkLoadFactorSix:
-        return "NetworkLoadFactorSix";
-    case QBluetoothDeviceInfo::NetworkNoService:
-        return "NetworkNoService";
-    default:
-        return "UnknownMinorNetworkClass";
-    }
-}
-
-// MinorPeripheralClass
-QString BluetoothUtils::minorPeripheralClassToString(QBluetoothDeviceInfo::MinorPeripheralClass minorClass) {
-    QStringList peripheralList;
-
-    if (minorClass & QBluetoothDeviceInfo::KeyboardPeripheral)
-        peripheralList << "KeyboardPeripheral";
-    if (minorClass & QBluetoothDeviceInfo::PointingDevicePeripheral)
-        peripheralList << "PointingDevicePeripheral";
-    if (minorClass & QBluetoothDeviceInfo::KeyboardWithPointingDevicePeripheral)
-        peripheralList << "KeyboardWithPointingDevicePeripheral";
-    if (minorClass & QBluetoothDeviceInfo::JoystickPeripheral)
-        peripheralList << "JoystickPeripheral";
-    if (minorClass & QBluetoothDeviceInfo::GamepadPeripheral)
-        peripheralList << "GamepadPeripheral";
-    if (minorClass & QBluetoothDeviceInfo::RemoteControlPeripheral)
-        peripheralList << "RemoteControlPeripheral";
-    if (minorClass & QBluetoothDeviceInfo::SensingDevicePeripheral)
-        peripheralList << "SensingDevicePeripheral";
-    if (minorClass & QBluetoothDeviceInfo::DigitizerTabletPeripheral)
-        peripheralList << "DigitizerTabletPeripheral";
-    if (minorClass & QBluetoothDeviceInfo::CardReaderPeripheral)
-        peripheralList << "CardReaderPeripheral";
-    if (peripheralList.isEmpty())
-        peripheralList << "UncategorizedPeripheral";
-
-    return peripheralList.join(", ");
-}
-
-// MinorPhoneClass
-QString BluetoothUtils::minorPhoneClassToString(QBluetoothDeviceInfo::MinorPhoneClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedPhone:
-        return "UncategorizedPhone";
-    case QBluetoothDeviceInfo::CellularPhone:
-        return "CellularPhone";
-    case QBluetoothDeviceInfo::CordlessPhone:
-        return "CordlessPhone";
-    case QBluetoothDeviceInfo::SmartPhone:
-        return "SmartPhone";
-    case QBluetoothDeviceInfo::WiredModemOrVoiceGatewayPhone:
-        return "WiredModemOrVoiceGatewayPhone";
-    case QBluetoothDeviceInfo::CommonIsdnAccessPhone:
-        return "CommonIsdnAccessPhone";
-    default:
-        return "UnknownMinorPhoneClass";
-    }
-}
-
-// MinorToyClass
-QString BluetoothUtils::minorToyClassToString(QBluetoothDeviceInfo::MinorToyClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedToy:
-        return "UncategorizedToy";
-    case QBluetoothDeviceInfo::ToyRobot:
-        return "ToyRobot";
-    case QBluetoothDeviceInfo::ToyVehicle:
-        return "ToyVehicle";
-    case QBluetoothDeviceInfo::ToyDoll:
-        return "ToyDoll";
-    case QBluetoothDeviceInfo::ToyController:
-        return "ToyController";
-    case QBluetoothDeviceInfo::ToyGame:
-        return "ToyGame";
-    default:
-        return "UnknownMinorToyClass";
-    }
-}
-
-// MinorWearableClass
-QString BluetoothUtils::minorWearableClassToString(QBluetoothDeviceInfo::MinorWearableClass minorClass) {
-    switch (minorClass) {
-    case QBluetoothDeviceInfo::UncategorizedWearableDevice:
-        return "UncategorizedWearableDevice";
-    case QBluetoothDeviceInfo::WearableWristWatch:
-        return "WearableWristWatch";
-    case QBluetoothDeviceInfo::WearablePager:
-        return "WearablePager";
-    case QBluetoothDeviceInfo::WearableJacket:
-        return "WearableJacket";
-    case QBluetoothDeviceInfo::WearableHelmet:
-        return "WearableHelmet";
-    case QBluetoothDeviceInfo::WearableGlasses:
-        return "WearableGlasses";
-    default:
-        return "UnknownMinorWearableClass";
+        return "Unknown Major Device Class";
     }
 }
 
@@ -320,3 +177,212 @@ QString BluetoothUtils::serviceClassToString(QBluetoothDeviceInfo::ServiceClasse
 
     return serviceList.join(", ");
 }
+
+static QString minorDeviceClassToString(QBluetoothDeviceInfo::MajorDeviceClass majorClass, quint8 minorClass)
+{
+    switch (majorClass) {
+    case QBluetoothDeviceInfo::ComputerDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorComputerClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedComputer:
+            return "Uncategorized Computer";
+        case QBluetoothDeviceInfo::DesktopComputer:
+            return "Desktop Computer";
+        case QBluetoothDeviceInfo::ServerComputer:
+            return "Server Computer";
+        case QBluetoothDeviceInfo::LaptopComputer:
+            return "Laptop Computer";
+        case QBluetoothDeviceInfo::HandheldClamShellComputer:
+            return "Handheld Clamshell Computer";
+        case QBluetoothDeviceInfo::HandheldComputer:
+            return "Handheld Computer";
+        case QBluetoothDeviceInfo::WearableComputer:
+            return "Wearable Computer";
+        default:
+            return "Unknown Computer Device";
+        }
+    case QBluetoothDeviceInfo::PhoneDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorPhoneClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedPhone:
+            return "Uncategorized Phone";
+        case QBluetoothDeviceInfo::CellularPhone:
+            return "Cellular Phone";
+        case QBluetoothDeviceInfo::CordlessPhone:
+            return "Cordless Phone";
+        case QBluetoothDeviceInfo::SmartPhone:
+            return "Smartphone";
+        case QBluetoothDeviceInfo::WiredModemOrVoiceGatewayPhone:
+            return "Wired Modem or Voice Gateway";
+        case QBluetoothDeviceInfo::CommonIsdnAccessPhone:
+            return "Common ISDN Access";
+        default:
+            return "Unknown Phone Device";
+        }
+    case QBluetoothDeviceInfo::NetworkDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorNetworkClass>(minorClass)) {
+        case QBluetoothDeviceInfo::NetworkFullService:
+            return "Network Full Service";
+        case QBluetoothDeviceInfo::NetworkLoadFactorOne:
+            return "Network Load Factor 1";
+        case QBluetoothDeviceInfo::NetworkLoadFactorTwo:
+            return "Network Load Factor 2";
+        case QBluetoothDeviceInfo::NetworkLoadFactorThree:
+            return "Network Load Factor 3";
+        case QBluetoothDeviceInfo::NetworkLoadFactorFour:
+            return "Network Load Factor 4";
+        case QBluetoothDeviceInfo::NetworkLoadFactorFive:
+            return "Network Load Factor 5";
+        case QBluetoothDeviceInfo::NetworkLoadFactorSix:
+            return "Network Load Factor 6";
+        case QBluetoothDeviceInfo::NetworkNoService:
+            return "Network No Service";
+        default:
+            return "Unknown Network Device";
+        }
+    case QBluetoothDeviceInfo::AudioVideoDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorAudioVideoClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedAudioVideoDevice:
+            return "Uncategorized Audio/Video Device";
+        case QBluetoothDeviceInfo::WearableHeadsetDevice:
+            return "Wearable Headset Device";
+        case QBluetoothDeviceInfo::HandsFreeDevice:
+            return "Hands-Free Device";
+        case QBluetoothDeviceInfo::Microphone:
+            return "Microphone";
+        case QBluetoothDeviceInfo::Loudspeaker:
+            return "Loudspeaker";
+        case QBluetoothDeviceInfo::Headphones:
+            return "Headphones";
+        case QBluetoothDeviceInfo::PortableAudioDevice:
+            return "Portable Audio Device";
+        case QBluetoothDeviceInfo::CarAudio:
+            return "Car Audio";
+        case QBluetoothDeviceInfo::SetTopBox:
+            return "Set-Top Box";
+        case QBluetoothDeviceInfo::HiFiAudioDevice:
+            return "Hi-Fi Audio Device";
+        case QBluetoothDeviceInfo::Vcr:
+            return "VCR";
+        case QBluetoothDeviceInfo::VideoCamera:
+            return "Video Camera";
+        case QBluetoothDeviceInfo::Camcorder:
+            return "Camcorder";
+        case QBluetoothDeviceInfo::VideoMonitor:
+            return "Video Monitor";
+        case QBluetoothDeviceInfo::VideoDisplayAndLoudspeaker:
+            return "Video Display and Loudspeaker";
+        case QBluetoothDeviceInfo::VideoConferencing:
+            return "Video Conferencing";
+        case QBluetoothDeviceInfo::GamingDevice:
+            return "Gaming Device";
+        default:
+            return "Unknown Audio/Video Device";
+        }
+    case QBluetoothDeviceInfo::PeripheralDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorPeripheralClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedPeripheral:
+            return "Uncategorized Peripheral";
+        case QBluetoothDeviceInfo::KeyboardPeripheral:
+            return "Keyboard";
+        case QBluetoothDeviceInfo::PointingDevicePeripheral:
+            return "Pointing Device";
+        case QBluetoothDeviceInfo::KeyboardWithPointingDevicePeripheral:
+            return "Keyboard with Pointing Device";
+        case QBluetoothDeviceInfo::JoystickPeripheral:
+            return "Joystick";
+        case QBluetoothDeviceInfo::GamepadPeripheral:
+            return "Gamepad";
+        case QBluetoothDeviceInfo::RemoteControlPeripheral:
+            return "Remote Control";
+        case QBluetoothDeviceInfo::SensingDevicePeripheral:
+            return "Sensing Device";
+        case QBluetoothDeviceInfo::DigitizerTabletPeripheral:
+            return "Digitizer Tablet";
+        case QBluetoothDeviceInfo::CardReaderPeripheral:
+            return "Card Reader";
+        default:
+            return "Unknown Peripheral Device";
+        }
+    case QBluetoothDeviceInfo::ImagingDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorImagingClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedImagingDevice:
+            return "Uncategorized Imaging Device";
+        case QBluetoothDeviceInfo::ImageDisplay:
+            return "Image Display";
+        case QBluetoothDeviceInfo::ImageCamera:
+            return "Image Camera";
+        case QBluetoothDeviceInfo::ImageScanner:
+            return "Image Scanner";
+        case QBluetoothDeviceInfo::ImagePrinter:
+            return "Image Printer";
+        default:
+            return "Unknown Imaging Device";
+        }
+    case QBluetoothDeviceInfo::WearableDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorWearableClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedWearableDevice:
+            return "Uncategorized Wearable Device";
+        case QBluetoothDeviceInfo::WearableWristWatch:
+            return "Wearable Wrist Watch";
+        case QBluetoothDeviceInfo::WearablePager:
+            return "Wearable Pager";
+        case QBluetoothDeviceInfo::WearableJacket:
+            return "Wearable Jacket";
+        case QBluetoothDeviceInfo::WearableHelmet:
+            return "Wearable Helmet";
+        case QBluetoothDeviceInfo::WearableGlasses:
+            return "Wearable Glasses";
+        default:
+            return "Unknown Wearable Device";
+        }
+    case QBluetoothDeviceInfo::ToyDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorToyClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedToy:
+            return "Uncategorized Toy";
+        case QBluetoothDeviceInfo::ToyRobot:
+            return "Toy Robot";
+        case QBluetoothDeviceInfo::ToyVehicle:
+            return "Toy Vehicle";
+        case QBluetoothDeviceInfo::ToyDoll:
+            return "Toy Doll or Action Figure";
+        case QBluetoothDeviceInfo::ToyController:
+            return "Toy Controller";
+        case QBluetoothDeviceInfo::ToyGame:
+            return "Toy Game";
+        default:
+            return "Unknown Toy Device";
+        }
+    case QBluetoothDeviceInfo::HealthDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorHealthClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedHealthDevice:
+            return "Uncategorized Health Device";
+        case QBluetoothDeviceInfo::HealthBloodPressureMonitor:
+            return "Blood Pressure Monitor";
+        case QBluetoothDeviceInfo::HealthThermometer:
+            return "Thermometer";
+        case QBluetoothDeviceInfo::HealthWeightScale:
+            return "Weight Scale";
+        case QBluetoothDeviceInfo::HealthGlucoseMeter:
+            return "Glucose Meter";
+        case QBluetoothDeviceInfo::HealthPulseOximeter:
+            return "Pulse Oximeter";
+        case QBluetoothDeviceInfo::HealthDataDisplay:
+            return "Data Display";
+        case QBluetoothDeviceInfo::HealthStepCounter:
+            return "Step Counter";
+        default:
+            return "Unknown Health Device";
+        }
+    case QBluetoothDeviceInfo::MiscellaneousDevice:
+        switch (static_cast<QBluetoothDeviceInfo::MinorMiscellaneousClass>(minorClass)) {
+        case QBluetoothDeviceInfo::UncategorizedMiscellaneous:
+            return "Uncategorized Miscellaneous Device";
+        default:
+            return "Unknown Miscellaneous Device";
+        }
+    case QBluetoothDeviceInfo::UncategorizedDevice:
+        return "Uncategorized Device";
+    default:
+        return "Unknown Device Class";
+    }
+}
+
