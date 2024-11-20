@@ -15,7 +15,7 @@ signals:
     void bleClientDisconnected(QVariantMap);
     void bleClientError(QVariantMap);
     void bleClientDeviceFound(QVariantMap);
-    void bleClientDiscoveryFinished(QVariantMap);
+    void bleClientDiscoveryFinished(QVariantList);
     void bleClientDataReceived(QVariantMap);
     bool bleClientSendData(QVariantMap);
     bool bleClientSearchServer(QVariantMap);

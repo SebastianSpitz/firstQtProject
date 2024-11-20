@@ -24,18 +24,19 @@ public:
 
 private:
 
-    // Sets the target device name to search for
+    // EventBus connected methods
+
+
+    // DeviceDiscoveryAgent connected methods
+
+    // EnergyController connected methods
+
+    // EnergyService connected methods
+
+
     void setTargetDeviceName(const QString &name);
-
-    // Starts scanning for BLE devices
     void startDeviceDiscovery();
-
-    // Sends data to the BLE server
-    void sendData(const QByteArray &data);
-
-    // Disconnects from the current BLE device
     void disconnectFromDevice();
-
     void deviceDiscoveryDeviceDiscovered(const QBluetoothDeviceInfo &deviceInfo);
     void deviceDiscoveryFinished();
     void deviceDiscoveryError();
@@ -45,19 +46,20 @@ private:
     void serviceDiscoveredHandler(const QBluetoothUuid &serviceUuid);
     void serviceScanDone();
     void serviceStateChanged(QLowEnergyService::ServiceState s);
-    void characteristicChanged(const QLowEnergyCharacteristic &c, const QByteArray &value);
+    bool sendData(const QByteArray &data);
+    void dataReceived(const QLowEnergyCharacteristic &c, const QByteArray &value);
     void descriptorWritten(const QLowEnergyDescriptor &d, const QByteArray &value);
 
     QVariantMap statusRequest();
     EventBus *eventBus;
     Logger *logger;
-    QString m_targetDeviceName;
-    QBluetoothDeviceDiscoveryAgent *m_deviceDiscoveryAgent;
-    QLowEnergyController *m_control;
-    QLowEnergyService *m_service;
-    QLowEnergyCharacteristic m_writeCharacteristic;
-    QLowEnergyCharacteristic m_readCharacteristic;
-    QLowEnergyDescriptor m_notificationDesc;
+    QString targetDeviceName;
+    QBluetoothDeviceDiscoveryAgent *deviceDiscoveryAgent;
+    QLowEnergyController *energyController;
+    QLowEnergyService *energyService;
+    QLowEnergyCharacteristic writeCharacteristic;
+    QLowEnergyCharacteristic readCharacteristic;
+    QLowEnergyDescriptor notificationDesc;
 };
 
 #endif // BLECLIENT_H
